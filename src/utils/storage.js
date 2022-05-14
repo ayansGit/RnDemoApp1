@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 export const type = {
     token: "app.token",
     userId: "app.userId",
+    profileCompleted: "app.profileCompleted",
     authData: "app.authData",
     userName: "app.userName",
     email: "app.email",
@@ -64,6 +65,28 @@ export async function getUserId() {
         // Error saving data
     }
     return parseInt(value);
+}
+
+export async function setProfileCompleted(value) {
+    try {
+        await AsyncStorage.setItem(
+            type.profileCompleted,
+            value
+        );
+    } catch (error) {
+        // Error saving data
+    }
+}
+
+export async function getProfileCompleted() {
+    let value = "No"
+    try {
+        value = await AsyncStorage.getItem(
+            type.profileCompleted)
+    } catch (error) {
+        // Error saving data
+    }
+    return value;
 }
 
 export async function setAuthData(value) {

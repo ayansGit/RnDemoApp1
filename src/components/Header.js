@@ -23,6 +23,8 @@ export default function Header(props) {
     onMenuPress,
     onBackPress,
     onAddPress,
+    onCalenderPress,
+    showCalender
   } = props;
 
   const handleOnBackPress = () => {
@@ -37,6 +39,10 @@ export default function Header(props) {
     if (onAddPress) onAddPress();
   };
 
+  const handleOnCalenderPress = () => {
+    if (onCalenderPress) onCalenderPress();
+  };
+
   const styles = StyleSheet.create({
     container: {
       flexDirection: 'row',
@@ -48,13 +54,13 @@ export default function Header(props) {
       elevation: 8,
       shadowColor: Color.black,
       shadowOpacity: 0.5,
-      shadowOffset: {height: 8, width:0}
+      shadowOffset: { height: 8, width: 0 }
     },
 
     title: {
       fontSize: normalize(14),
       fontFamily: Font.medium,
-      color: darkContent?  Color.darkGrey : Color.white,
+      color: darkContent ? Color.darkGrey : Color.white,
       textAlign: 'center',
       alignSelf: 'center',
       position: 'absolute',
@@ -103,14 +109,29 @@ export default function Header(props) {
         {onAddPress &&
           <TouchableOpacity
             onPress={handleOnAddPress}
-            style={{ height: '100%', aspectRatio: 1, padding: normalize(17), position: "absolute", right:0 }}>
+            style={{ height: '100%', aspectRatio: 1, padding: normalize(17), position: "absolute", right: 0 }}>
             <Image
               style={{
                 width: '100%',
                 height: '100%',
                 tintColor: darkContent ? Color.darkGrey : Color.white,
               }}
-              source={ImagePath.addPage}
+              source={ImagePath.add}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>}
+
+        {onCalenderPress &&
+          <TouchableOpacity
+            onPress={handleOnCalenderPress}
+            style={{ height: '100%', aspectRatio: 1, padding: normalize(17), position: "absolute", right: 0 }}>
+            <Image
+              style={{
+                width: '100%',
+                height: '100%',
+                tintColor: darkContent ? Color.darkGrey : Color.white,
+              }}
+              source={ImagePath.calender}
               resizeMode="contain"
             />
           </TouchableOpacity>}
@@ -129,6 +150,8 @@ Header.propTypes = {
   onMenuPress: PropTypes.func,
   onBackPress: PropTypes.func,
   onAddPress: PropTypes.func,
+  onCalenderPress: PropTypes.func,
+  showCalender: PropTypes.bool,
 };
 
 Header.defaultProps = {
@@ -139,4 +162,6 @@ Header.defaultProps = {
   onMenuPress: null,
   onBackPress: null,
   onAddPress: null,
+  onCalenderPress: null,
+  showCalender: false
 };

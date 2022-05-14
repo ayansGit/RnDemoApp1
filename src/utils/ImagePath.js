@@ -10,5 +10,7 @@ const ImagePath = {
   profile: require('../assets/images/user.png'),
   info: require('../assets/images/info.png'),
   logout: require('../assets/images/logout.png'),
+  add: require('../assets/images/addPage.png'),
+  calender: require('../assets/images/calendar.png'),
 };
 export default ImagePath;

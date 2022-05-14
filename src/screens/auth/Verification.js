@@ -13,8 +13,12 @@ import Button from '../../components/Button';
 import Color from '../../utils/Color';
 import Font from '../../utils/Font';
 import normalize from '../../utils/Normalize';
+import {postRequest} from "../../utils/apiRequest"
+import {setToken, setUserId, setProfileCompleted} from "../../utils/storage"
 
-const Verification = ({ navigation }) => {
+
+const Verification = ({ navigation, route }) => {
+    const [loading, setLoading] = useState(false)
     const [first, setFirst] = useState('');
     const [second, setSecond] = useState('');
     const [third, setThird] = useState('');
@@ -25,19 +29,39 @@ const Verification = ({ navigation }) => {
     const first4 = useRef(null);
 
 
-
     useEffect(() => {
         first1.current.focus();
     }, []);
 
-    const submit = () => {
+    const submit = async() => {
         // console.log('submitted');
         const OTP = [first, second, third, fourth].join('');
-        // let request = {
-        //     otp: OTP,
-        //     user_id: auth.loginId,
-        // };
-        navigation.navigate('SignedInNavigator');
+        
+        if(OTP.length<4){
+            toast.show("Enter Valid OTP", "failure")
+            return;
+        }
+        setLoading(true)
+        try{
+            const request = {
+                otp: OTP,
+                user_id: route.params.loginId,
+            };
+            const response = await postRequest("verify", request);
+            if(response.success){
+                setToken(response.token);
+                setUserId(response.data.id);
+                setProfileCompleted(response.data.profile_completed);
+                navigation.replace("SignedInNavigator");
+                toast.show(response.message.join("\n"), "success");
+            }else{
+                toast.show(response.message.join("\n"), "failure");
+            }
+            
+        }catch(error){
+            toast.show(error.message, "failure")
+        }
+        setLoading(false)
     };
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -100,7 +124,7 @@ const Verification = ({ navigation }) => {
                         />
                     </View>
                     <Button
-                        loading={false}
+                        loading={loading}
                         text="SUBMIT"
                         onPress={() => submit()}
                     />
@@ -129,7 +153,7 @@ const Verification = ({ navigation }) => {
 const styles = StyleSheet.create({
     mainContainer: {
         flex:1,
-        backgroundColor: Color.themeSecondary,
+        backgroundColor: Color.white,
         alignItems: 'center',
         padding: 20,
     },
@@ -142,7 +166,7 @@ const styles = StyleSheet.create({
     },
     normatText: {
         textAlign: 'center',
-        color: Color.veryLightGrey,
+        color: Color.textColorDark,
     },
     textInputContainer: {
         flexDirection: 'row',
@@ -155,14 +179,14 @@ const styles = StyleSheet.create({
     textInput: {
         margin: normalize(10),
         // display: 'flex',
-        borderColor: Color.veryLightGrey,
+        borderColor: Color.darkGrey,
         borderWidth: normalize(1),
         padding: normalize(5),
         height: normalize(50),
         width: normalize(42),
         borderRadius: normalize(7),
         textAlign: 'center',
-        color: Color.white,
+        color: Color.textColorDark,
         fontSize: normalize(16),
     },
 });

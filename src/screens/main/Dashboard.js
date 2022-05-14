@@ -5,8 +5,14 @@ import Color from '../../utils/Color'
 import ImagePath from '../../utils/ImagePath'
 import normalize from '../../utils/Normalize'
 import DashboardItem from '../../components/DashboardItem'
+import { clearAppData } from '../../utils/storage'
 
 export default function Dashboard({navigation}) {
+
+  const logout = async() => {
+    await clearAppData();
+    navigation.replace("SignedOutNavigator");
+  }
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar hidden={false} backgroundColor={Color.themeSecondary} barStyle="light-content" />
@@ -26,7 +32,8 @@ export default function Dashboard({navigation}) {
               width={normalize(80)}
               height={normalize(85)}
               title='Appointments'
-              icon={ImagePath.appointment} />
+              icon={ImagePath.appointment}
+              onItemPress={() => navigation.navigate("Appointments")} />
 
             <DashboardItem
               width={normalize(80)}
@@ -38,7 +45,8 @@ export default function Dashboard({navigation}) {
               width={normalize(80)}
               height={normalize(85)}
               title='Specilaity'
-              icon={ImagePath.speciality} />
+              icon={ImagePath.speciality}
+              onItemPress={() => navigation.navigate("Speciality")} />
           </View>
 
           <View style={{
@@ -66,7 +74,8 @@ export default function Dashboard({navigation}) {
               width={normalize(80)}
               height={normalize(85)}
               title='Logout'
-              icon={ImagePath.logout} />
+              icon={ImagePath.logout}
+              onItemPress={logout} />
           </View>
 
 

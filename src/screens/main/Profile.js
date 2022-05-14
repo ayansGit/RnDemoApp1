@@ -6,10 +6,13 @@ import ImagePath from '../../utils/ImagePath'
 import normalize from '../../utils/Normalize'
 import DashboardItem from '../../components/DashboardItem'
 import Button from '../../components/Button'
+import { getRequest, postRequest } from '../../utils/apiRequest'
+import { getToken } from '../../utils/storage'
 
 export default function Profile({ navigation }) {
 
 
+  const [loading, setLoading] = useState(false)
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
@@ -17,8 +20,85 @@ export default function Profile({ navigation }) {
   const [profDegree, setProfDegree] = useState("")
   const [experience, setExperience] = useState("")
 
+  const validate = () => {
+    if (fullName.length == 0) return [false, "Fullname required"];
+    if (email.length == 0) return [false, "Email required"];
+    if (!validateEmail(email)) return [false, "Enter valid email"];
+    return [true, "success"];
+  }
+
+  const validateEmail = (email) => {
+    return email.match(
+      /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+  };
+
   const handleOnBackPress = () => {
     navigation.goBack()
+  }
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // The screen is focused
+      // Call any action
+      getProfile()
+    });
+    return unsubscribe
+  }, [navigation])
+
+
+  const getProfile = async () => {
+    loader.show();
+    try {
+      let token = await getToken()
+
+      const header = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+      const response = await getRequest("profile/details", header)
+      if (response.success) {
+        setFullName(response.data.full_name ? response.data.full_name : "")
+        setEmail(response.data.email ? response.data.email : "")
+        setPhone(response.data.phone ? response.data.phone.toString() : "")
+      } else {
+        toast.show(response.message.join("\n"), "failure");
+      }
+    } catch (error) {
+      toast.show(error.message, "failure");
+    }
+    loader.hide();
+  }
+
+  const updateProfile = async () => {
+    const [isValid, message] = validate();
+    if (!isValid) {
+      toast.show(message, "failure")
+      return;
+    }
+    setLoading(true);
+    try {
+      let token = await getToken()
+      let request = {
+        full_name: fullName,
+        email: email,
+        phone: phone
+      }
+
+      const header = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+      const response = await postRequest("profile/update", request, header)
+      if (response.success) {
+        toast.show(response.message.join("\n"), "success");
+      } else {
+        toast.show(response.message.join("\n"), "failure");
+      }
+    } catch (error) {
+      toast.show(error.message, "failure");
+    }
+    setLoading(false);
   }
 
   return (
@@ -54,10 +134,7 @@ export default function Profile({ navigation }) {
               <View style={{ width: "100%", backgroundColor: Color.white, borderRadius: normalize(40), borderWidth: normalize(1), borderColor: Color.darkGrey, }}>
 
                 <TextInput
-                  focusable={true}
-                  autoFocus={true}
                   value={fullName}
-                  maxLength={10}
                   keyboardType="default"
                   style={{ width: "100%", paddingLeft: normalize(10), paddingRight: normalize(10), fontSize: normalize(14) }}
                   onChangeText={(text) => {
@@ -72,7 +149,6 @@ export default function Profile({ navigation }) {
 
                 <TextInput
                   value={email}
-                  maxLength={10}
                   keyboardType="default"
                   style={{ width: "100%", paddingLeft: normalize(10), paddingRight: normalize(10), fontSize: normalize(14) }}
                   onChangeText={(text) => {
@@ -87,6 +163,7 @@ export default function Profile({ navigation }) {
               <View style={{ width: "100%", backgroundColor: Color.white, borderRadius: normalize(40), borderWidth: normalize(1), borderColor: Color.darkGrey, }}>
 
                 <TextInput
+                  editable={false}
                   value={phone}
                   maxLength={10}
                   keyboardType="number-pad"
@@ -104,7 +181,6 @@ export default function Profile({ navigation }) {
 
                 <TextInput
                   value={address}
-                  maxLength={10}
                   keyboardType="default"
                   style={{ width: "100%", paddingLeft: normalize(10), paddingRight: normalize(10), fontSize: normalize(14) }}
                   onChangeText={(text) => {
@@ -120,7 +196,6 @@ export default function Profile({ navigation }) {
 
                 <TextInput
                   value={profDegree}
-                  maxLength={10}
                   keyboardType="default"
                   style={{ width: "100%", paddingLeft: normalize(10), paddingRight: normalize(10), fontSize: normalize(14) }}
                   onChangeText={(text) => {
@@ -135,7 +210,7 @@ export default function Profile({ navigation }) {
 
                 <TextInput
                   value={experience}
-                  maxLength={10}
+                  maxLength={3}
                   keyboardType="number-pad"
                   style={{ width: "100%", paddingLeft: normalize(10), paddingRight: normalize(10), fontSize: normalize(14) }}
                   onChangeText={(text) => {
@@ -144,7 +219,7 @@ export default function Profile({ navigation }) {
 
               </View>
 
-              <Button loading={false} text='SUBMIT' marginTop={40} marginBottom={normalize(60)} />
+              <Button loading={loading} text='SUBMIT' marginTop={40} marginBottom={normalize(60)} onPress={updateProfile} />
             </View>
           </ScrollView>
 
