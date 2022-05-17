@@ -12,7 +12,6 @@ import DatePicter from '../../components/Datepicker'
 
 export default function Appointments({ navigation }) {
 
-    const [specialityList, setSpecialityList] = useState([])
     const [showCalendar, setShowCalendar] = useState(false)
 
     const handleOnBackPress = () => navigation.goBack();
@@ -24,20 +23,19 @@ export default function Appointments({ navigation }) {
         console.log("Date", value)
         setShowCalendar(false)
     }
-    const addSpeciality = () => navigation.navigate("AddSpeciality");
 
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             // The screen is focused
             // Call any action
-            getSpecialityList()
+            // getAppointmentList()
         });
         return unsubscribe
     }, [navigation])
 
 
-    const getSpecialityList = async () => {
+    const getAppointmentList = async () => {
         loader.show();
         try {
             let token = await getToken()
@@ -46,10 +44,10 @@ export default function Appointments({ navigation }) {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             }
-            const response = await getRequest("speciality/details", header)
+            const response = await getRequest("appointments/list", header)
             console.log("RESPONSE", response)
             if (response.success) {
-                // response.data && setSpeciality(response.data);
+                //set array here
             } else {
                 toast.show(response.message.join("\n"), "failure");
             }
@@ -59,7 +57,7 @@ export default function Appointments({ navigation }) {
         loader.hide();
     }
 
-    const specialityItem = () => {
+    const appointmentItem = () => {
         return (
             <View style={{ width: "100%", paddingLeft: "5%", paddingRight: "5%" }}>
                 <View style={{
@@ -119,7 +117,7 @@ export default function Appointments({ navigation }) {
 
                     <FlatList
                         data={[1, 2, 3]}
-                        renderItem={specialityItem}
+                        renderItem={appointmentItem}
                         keyExtractor={(item, index) => index} />
 
                     <DatePicter visible={showCalendar} onConfirm={handleOnDateSelected} />

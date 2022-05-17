@@ -6,6 +6,8 @@ import Dashboard from '../screens/main/Dashboard';
 import Speciality from '../screens/main/Speciality';
 import AddSpeciality from '../screens/main/AddSpeciality';
 import Appointments from '../screens/main/Appointments'
+import Patients from '../screens/main/Patients';
+import AppInfo from '../screens/main/AppInfo';
 
 
 
@@ -22,6 +24,8 @@ export default function () {
       <Stack.Screen name="Speciality" component={Speciality} />
       <Stack.Screen name="AddSpeciality" component={AddSpeciality} />
       <Stack.Screen name="Appointments" component={Appointments} />
+      <Stack.Screen name="Patients" component={Patients} />
+      <Stack.Screen name="AppInfo" component={AppInfo} />
     </Stack.Navigator>
   );
 }

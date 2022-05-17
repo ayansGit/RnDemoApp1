@@ -39,7 +39,8 @@ export default function Dashboard({navigation}) {
               width={normalize(80)}
               height={normalize(85)}
               title='Patients'
-              icon={ImagePath.patient} />
+              icon={ImagePath.patient} 
+              onItemPress={() => navigation.navigate("Patients")}/>
 
             <DashboardItem
               width={normalize(80)}
@@ -68,7 +69,8 @@ export default function Dashboard({navigation}) {
               width={normalize(80)}
               height={normalize(85)}
               title='App Info'
-              icon={ImagePath.info} />
+              icon={ImagePath.info}
+              onItemPress={() => navigation.navigate("AppInfo")} />
 
             <DashboardItem
               width={normalize(80)}

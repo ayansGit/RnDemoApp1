@@ -39,7 +39,7 @@ export default function Speciality({navigation}) {
             const response = await getRequest("speciality/details", header)
             console.log("RESPONSE", response)
             if (response.success) {
-                // response.data && setSpeciality(response.data);
+                response.data && setSpecialityList(response.data);
             } else {
                 toast.show(response.message.join("\n"), "failure");
             }
@@ -49,7 +49,7 @@ export default function Speciality({navigation}) {
         loader.hide();
     }
 
-    const specialityItem = () => {
+    const specialityItem = ({item}) => {
         return (
             <View style={{ width: "100%", paddingLeft: "5%", paddingRight: "5%" }}>
                 <View style={{
@@ -68,10 +68,10 @@ export default function Speciality({navigation}) {
                     shadowOpacity: 0.5, marginTop: normalize(10), marginBottom: normalize(10)
                 }}>
                     <Text style={{ fontSize: normalize(14), color: Color.textColorDark }}>
-                        Diabetes
+                        {item.speciality_details.name}
                     </Text>
                     <Text style={{ fontSize: normalize(14), color: Color.textColorDark }}>
-                        {`₹${"1000"}`}
+                        {`₹${item.amount}`}
                     </Text>
                 </View>
             </View>
